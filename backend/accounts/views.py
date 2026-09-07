@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.models import User
 
 from .serializers import SignupSerializer
 
@@ -57,3 +58,20 @@ class LoginView(APIView):
             },
             status=status.HTTP_401_UNAUTHORIZED
         )
+
+class DashboardView(APIView):
+
+    def get(self, request):
+        users = User.objects.all()
+
+        return Response({
+            "message": "Welcome to Dashboard",
+            "total_users": users.count(),
+            "users": [
+                {
+                    "username": user.username,
+                    "email": user.email
+                }
+                for user in users
+            ]
+        }, status=status.HTTP_200_OK)
